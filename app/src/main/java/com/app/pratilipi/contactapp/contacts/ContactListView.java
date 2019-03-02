@@ -7,6 +7,7 @@ import com.app.pratilipi.contactapp.R;
 
 import com.travelyaari.tycorelib.mvp.ViewState;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
@@ -14,7 +15,7 @@ import butterknife.BindView;
 public class ContactListView extends ProgressView<ViewState, ContactListState> {
 
     @BindView(R.id.list_view)
-    RecyclerView mListView;
+    RecyclerView mContactListView;
 
 
 
@@ -25,7 +26,7 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
 
     @Override
     protected View getContentView() {
-        return mListView;
+        return mContactListView;
     }
 
     @Override
@@ -40,6 +41,11 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
 
     @Override
     protected void onInflate() {
+        mContactListView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
 
+    }
+
+    void setAdapter(ContactListAdapter adapter) {
+        mContactListView.setAdapter(adapter);
     }
 }

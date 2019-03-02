@@ -52,7 +52,7 @@ public class AppModule extends TYApplication {
      * function initialize the corelib
      */
     private void initCoreLib() {
-        CoreLib.init(getApplicationContext(), Constants.Environments.PRODUCTION_ENV);
+        CoreLib.init(getApplicationContext(), Constants.Environments.DEV_ENV);
 
     }
 

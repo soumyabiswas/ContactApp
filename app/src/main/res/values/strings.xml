@@ -1,10 +1,13 @@
 <resources>
-    <string name="app_name">SampleApp</string>
+    <string name="app_name">ContactApp</string>
     <string name="label_retry">Retry</string>
     <string name="message_loading">Please wait&#8230;</string>
     <string name="message_check_internet">Please check your internet connection and Retry</string>
     <string name="message_something_went_wrong">Oops! something went wrong, please Retry</string>
     <string name="message_unable_to_fetch_result">Unable to fetch the result, please try again</string>
     <string name="message_no_result">Oops! no result found. Why don\'t you try searching something else!</string>
+    <string name="message_please_allow_contacts">Please provide contacts read permission by going to settings to receive better service from us</string>
+    <string name="explain_to_read_contacts">"We need permission to access your contacts so as to enable you to add your friends to your trip"</string>
+
 
 </resources>

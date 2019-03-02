@@ -22,5 +22,8 @@ public class Constants {
     public static final String SORT_TYPE = "SORT_TYPE";
     public static final String LOADING = "LOADING";
 
+    public static final String CONTACT_LIST_LOADED_EVENT = "CONTACT_LIST_LOADED_EVENT";
+
+
 
 }
