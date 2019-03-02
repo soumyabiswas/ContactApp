@@ -23,6 +23,9 @@ public class Constants {
     public static final String LOADING = "LOADING";
 
     public static final String CONTACT_LIST_LOADED_EVENT = "CONTACT_LIST_LOADED_EVENT";
+    public static final String CONTACT_ITEM_CLICKED_EVENT = "CONTACT_ITEM_CLICKED_EVENT";
+    public static final String CONTACT_CALL_CLICKED_EVENT = "CONTACT_CALL_CLICKED_EVENT";
+    public static final String CONTACT_SMS_CLICKED_EVENT = "CONTACT_SMS_CLICKED_EVENT";
 
 
 

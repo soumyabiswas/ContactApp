@@ -31,7 +31,7 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     @Override
     protected void onCreatePresenter() {
         createStateIfNull();
-        mContactListAdapter = new ContactListAdapter();
+        mContactListAdapter = new ContactListAdapter(this);
         mView.setAdapter(mContactListAdapter);
         askForContactPermission();
     }

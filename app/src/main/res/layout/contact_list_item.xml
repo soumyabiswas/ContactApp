@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,52 +11,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="@dimen/padding_small"
+        android:padding="@dimen/padding_large"
         android:orientation="horizontal">
 
-       <androidx.appcompat.widget.AppCompatImageView
-           android:id="@+id/contact_img"
-           android:layout_width="50dp"
-           android:layout_height="wrap_content" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/profile_text_img"
+            android:layout_width="@dimen/contact_cicle_size"
+            android:layout_height="@dimen/contact_cicle_size"
+            android:layout_gravity="center_vertical"
+            />
 
-        <LinearLayout
-            android:id="@+id/content_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_medium">
 
-            <androidx.appcompat.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/contact_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/padding_medium"
+                android:textSize="@dimen/textSize_small"
                 android:textColor="@color/black"
-                app:buttonTint="@color/colorPrimary"
                 tools:text="Ram" />
-
-            <TextView
-                android:id="@+id/contact_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_small"
-                android:textColor="@color/smokey_dark_grey"
-                tools:text="9977665544" />
-
-            <TextView
-                android:id="@+id/contact_mail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/padding_small"
-                android:textColor="@color/smokey_dark_grey"
-                tools:text="abc@gmail.com" />
         </LinearLayout>
-    </LinearLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/light_grey" />
-
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 
 import com.app.pratilipi.contactapp.contacts.ContactItemVO;
+import com.app.pratilipi.contactapp.contacts.contactdetails.ContactDetailState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,31 +32,28 @@ public final class API {
                     public void call(Subscriber<? super List<ContactItemVO>> sub) {
                         try {
                             List<ContactItemVO> contactItemList = new ArrayList<>();
-                            Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, "UPPER(" + ContactsContract.Contacts.DISPLAY_NAME + ") ASC");
-                            while (phones.moveToNext()) {
-                                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            String order = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
+                            String[] projection = new String[] {
+                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+
+                            };
+
+                            Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, order);
+
+                            while (cursor.moveToNext()) {
+                                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                               // String phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
                                 ContactItemVO contactItemVO = new ContactItemVO();
                                 contactItemVO.setmName(name);
-                                contactItemVO.setmNumber(phoneNumber);
-                                String id = phones.getString(phones.getColumnIndex(ContactsContract.Contacts._ID));
-                                Cursor phones1 = context.getContentResolver().query(
-                                        ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                                        new String[]{id}, null);
-                                while(phones1.moveToNext()){
-                                    String email = phones1.getString(phones1.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                                    contactItemVO.setmEmail(email);
-                                }
-                                phones1.close();
-
-                                Uri imageUri = getPhotoUri(Long.parseLong(id),context);
-                                if(imageUri!=null){
-                                    contactItemVO.setmImageUrl(imageUri.toString());
-                                }
+                              //  contactItemVO.setmNumber(phone);
+                                contactItemVO.setmImageUrl(photoUri);
                                 contactItemList.add(contactItemVO);
+
                             }
-                            phones.close();
+                            cursor.close();
                             sub.onNext(contactItemList);
                             sub.onCompleted();
                         } catch (Exception e) {
@@ -69,39 +67,60 @@ public final class API {
     }
 
 
-    public static Uri getPhotoUri(long contactId,final  Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
 
-        try {
-            Cursor cursor = contentResolver
-                    .query(ContactsContract.Data.CONTENT_URI,
-                            null,
-                            ContactsContract.Data.CONTACT_ID
-                                    + "="
-                                    + contactId
-                                    + " AND "
+    /**
+     * function returns the contacts details request observable
+     *
+     * @return the created Observable
+     */
+    public static Observable<ContactDetailState> getContactDetailsObservable(final Context context) {
+        return Observable.create(
+                new Observable.OnSubscribe<ContactDetailState>() {
+                    @Override
+                    public void call(Subscriber<? super ContactDetailState> sub) {
+                        try {
+                            ContactDetailState state = new ContactDetailState();
 
-                                    + ContactsContract.Data.MIMETYPE
-                                    + "='"
-                                    + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE
-                                    + "'", null, null);
+                            String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '"
+                                    + ("1") + "'";
+                            String order = ContactsContract.Contacts.DISPLAY_NAME
+                                    + " COLLATE LOCALIZED ASC";
+                            String[] projection = new String[] {
+                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
 
-            if (cursor != null) {
-                if (!cursor.moveToFirst()) {
-                    return null; // no photo
+                            };
+
+                            Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, selection+ " AND " + ContactsContract.Contacts.HAS_PHONE_NUMBER
+                                    + "=1", null, order);
+
+                            while (cursor.moveToNext()) {
+                                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                // String phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+
+
+                            }
+                            cursor.close();
+                            sub.onNext(state);
+                            sub.onCompleted();
+                        } catch (Exception e) {
+                            sub.onError(e);
+                        }
+                    }
                 }
-            } else {
-                return null; // error in cursor process
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Uri person = ContentUris.withAppendedId(
-                ContactsContract.Contacts.CONTENT_URI, contactId);
-        return Uri.withAppendedPath(person,
-                ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+        ).retryWhen(new RetryWhenObservable(5))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
+
+
+
+
+
+
+
+
+
 }

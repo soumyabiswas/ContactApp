@@ -7,6 +7,7 @@ import com.app.pratilipi.contactapp.R;
 
 import com.travelyaari.tycorelib.mvp.ViewState;
 
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -42,6 +43,9 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
     @Override
     protected void onInflate() {
         mContactListView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContactListView.getContext(),
+                DividerItemDecoration.VERTICAL);
+        mContactListView.addItemDecoration(dividerItemDecoration);
 
     }
 

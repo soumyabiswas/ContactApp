@@ -1,5 +1,6 @@
 package com.app.pratilipi.contactapp.contacts;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,8 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.R;
 import com.app.pratilipi.contactapp.utils.ImageLoadUtils;
@@ -15,9 +18,11 @@ import com.travelyaari.tycorelib.adapters.RecyclerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.widget.AppCompatCheckBox;
+
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+
+
 
 
 /**
@@ -28,11 +33,16 @@ public class ContactListAdapter extends RecyclerAdapter.BaseRecycleViewAdapter<C
 
 
     LayoutInflater mInflater;
+    ColorGenerator mGenerator;
+    Activity mActivity;
     private List<ContactItemVO> mContactListFiltered;
     private List<ContactItemVO> mContactList;
 
-    public ContactListAdapter() {
+    public ContactListAdapter(Activity activity) {
         super();
+        this.mActivity = activity;
+        mGenerator = ColorGenerator.MATERIAL;
+
     }
 
     public ContactListAdapter(List<ContactItemVO> contactList) {
@@ -54,9 +64,11 @@ public class ContactListAdapter extends RecyclerAdapter.BaseRecycleViewAdapter<C
     @Override
     protected void updateView(ContactListAdapter.ViewHolder viewHolder, final ContactItemVO item) {
         viewHolder.mContactName.setText(item.getmName());
-        viewHolder.mContactNumber.setText(item.getmNumber());
-        viewHolder.mContactEmail.setText(item.getmEmail());
-        ImageLoadUtils.loadWith(AppModule.getmModule(), item.getmImageUrl(), viewHolder.mContactImg);
+        int color = mGenerator.getColor(item.getmName());
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(item.getmName().substring(0, 1), color);
+        viewHolder.mContactImg.setImageDrawable(drawable);
+
     }
 
 
@@ -97,8 +109,6 @@ public class ContactListAdapter extends RecyclerAdapter.BaseRecycleViewAdapter<C
 
     public static class ViewHolder extends RecyclerAdapter.ViewHolder {
         AppCompatTextView mContactName;
-        TextView mContactNumber;
-        TextView mContactEmail;
         AppCompatImageView mContactImg;
         View mContentView;
 
@@ -110,9 +120,7 @@ public class ContactListAdapter extends RecyclerAdapter.BaseRecycleViewAdapter<C
         public ViewHolder(View itemView) {
             super(itemView);
             mContactName = itemView.findViewById(R.id.contact_name);
-            mContactNumber = itemView.findViewById(R.id.contact_number);
-            mContactEmail = itemView.findViewById(R.id.contact_mail);
-            mContactImg = itemView.findViewById(R.id.contact_img);
+            mContactImg = itemView.findViewById(R.id.profile_text_img);
             mContentView = itemView;
 
 //            mContentView.setOnClickListener(new View.OnClickListener() {
