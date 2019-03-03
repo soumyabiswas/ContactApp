@@ -3,23 +3,22 @@ package com.app.pratilipi.contactapp.contacts.contactdetails;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.Common.views.ProgressView;
 import com.app.pratilipi.contactapp.Constants;
 import com.app.pratilipi.contactapp.R;
 import com.app.pratilipi.contactapp.utils.ImageLoadUtils;
 import com.travelyaari.tycorelib.events.CoreEvent;
-import com.travelyaari.tycorelib.mvp.MVPView;
 import com.travelyaari.tycorelib.mvp.ViewState;
-
-import java.util.List;
 
 import androidx.appcompat.widget.AppCompatImageView;
 import butterknife.BindView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class ContactDetailView extends ProgressView<ViewState, ContactDetailState> {
@@ -27,12 +26,15 @@ public class ContactDetailView extends ProgressView<ViewState, ContactDetailStat
 
 
     @BindView(R.id.profile_img)
-    AppCompatImageView mImageView;
+    CircleImageView mProfileImg;
+
+    @BindView(R.id.profile_text_img)
+    ImageView mProfileTextImg;
 
     @BindView(R.id.content_view)
-    AppCompatImageView mContentView;
+    View mContentView;
 
-    @BindView(R.id.name)
+    @BindView(R.id.profile_name)
     TextView mContactName;
 
     @BindView(R.id.phone_numbers_layout)
@@ -59,7 +61,7 @@ public class ContactDetailView extends ProgressView<ViewState, ContactDetailStat
 
     @Override
     protected String getRetryEventName() {
-        return null;
+        return Constants.INITIATE_CONTACT_DETAIL_LOAD_EVENT;
     }
 
     @Override
@@ -90,7 +92,7 @@ public class ContactDetailView extends ProgressView<ViewState, ContactDetailStat
             }
         });
         AppCompatImageView smsIcon = view.findViewById(R.id.sms);
-        smsIcon.setTag(smsIcon);
+        smsIcon.setTag(phoneNumber);
         smsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,11 +116,11 @@ public class ContactDetailView extends ProgressView<ViewState, ContactDetailStat
         mEmailLayout.addView(view);
     }
 
-    public void setImage(String imageUrl){
-        if(imageUrl!=null) {
-            ImageLoadUtils.loadWith(AppModule.getmModule(), imageUrl, mImageView);
-        }else {
-            mImageView.setImageResource(R.drawable.ic_person);
+    public void setImage(String imageUrl,TextDrawable drawable){
+        if (imageUrl == null) {
+           mProfileTextImg.setImageDrawable(drawable);
+        } else {
+            ImageLoadUtils.loadWith(AppModule.getmModule(), imageUrl, mProfileImg);
         }
 
     }

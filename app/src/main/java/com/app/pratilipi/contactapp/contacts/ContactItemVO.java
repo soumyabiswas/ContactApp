@@ -19,17 +19,13 @@ public class ContactItemVO implements Parcelable {
         }
     };
     String mName;
-    String mNumber;
-    String mEmail;
     String mImageUrl;
+
 
 
     protected ContactItemVO(Parcel in) {
         mName = in.readString();
-        mNumber = in.readString();
-        mEmail = in.readString();
         mImageUrl = in.readString();
-
     }
 
     public ContactItemVO() {
@@ -44,8 +40,6 @@ public class ContactItemVO implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mName);
-        dest.writeString(mNumber);
-        dest.writeString(mEmail);
         dest.writeString(mImageUrl);
 
     }
@@ -58,23 +52,6 @@ public class ContactItemVO implements Parcelable {
         this.mName = mName;
     }
 
-    public String getmNumber() {
-        return mNumber;
-    }
-
-    public void setmNumber(String mNumber) {
-        this.mNumber = mNumber;
-    }
-
-    public String getmEmail() {
-        return mEmail;
-    }
-
-    public void setmEmail(String mEmail) {
-        this.mEmail = mEmail;
-    }
-
-
     public String getmImageUrl() {
         return mImageUrl;
     }
@@ -82,6 +59,8 @@ public class ContactItemVO implements Parcelable {
     public void setmImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
     }
+
+
 
 
 

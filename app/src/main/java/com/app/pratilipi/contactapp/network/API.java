@@ -1,10 +1,9 @@
 package com.app.pratilipi.contactapp.network;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 
 import com.app.pratilipi.contactapp.contacts.ContactItemVO;
@@ -17,6 +16,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static android.provider.OpenableColumns.DISPLAY_NAME;
 
 public final class API {
 
@@ -38,17 +39,14 @@ public final class API {
                                     ContactsContract.CommonDataKinds.Phone.PHOTO_URI
 
                             };
-
-                            Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, order);
+                            ContentResolver contentResolver = context.getContentResolver();
+                            Cursor cursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, order);
 
                             while (cursor.moveToNext()) {
                                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                               // String phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                                 String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
-
                                 ContactItemVO contactItemVO = new ContactItemVO();
                                 contactItemVO.setmName(name);
-                              //  contactItemVO.setmNumber(phone);
                                 contactItemVO.setmImageUrl(photoUri);
                                 contactItemList.add(contactItemVO);
 
@@ -66,43 +64,80 @@ public final class API {
                 .subscribeOn(Schedulers.io());
     }
 
-
-
     /**
      * function returns the contacts details request observable
      *
      * @return the created Observable
      */
-    public static Observable<ContactDetailState> getContactDetailsObservable(final Context context) {
+    public static Observable<ContactDetailState> getContactDetailsObservable(final Context context, final String contactName) {
         return Observable.create(
                 new Observable.OnSubscribe<ContactDetailState>() {
                     @Override
                     public void call(Subscriber<? super ContactDetailState> sub) {
                         try {
                             ContactDetailState state = new ContactDetailState();
+                            String phoneNo = null;
+                            String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like'%" + contactName +"%'";
+                            String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};
+                            Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                    projection, selection, null, null);
+                            if (c.moveToFirst()) {
+                                phoneNo = c.getString(0);
+                                state.setmPhoneNumber(phoneNo);
+                            }
+                            c.close();
+                            sub.onNext(state);
+                            sub.onCompleted();
+                        } catch (Exception e) {
+                            sub.onError(e);
+                        }
+                    }
+                }
+        ).retryWhen(new RetryWhenObservable(5))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+    }
 
-                            String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '"
-                                    + ("1") + "'";
-                            String order = ContactsContract.Contacts.DISPLAY_NAME
-                                    + " COLLATE LOCALIZED ASC";
-                            String[] projection = new String[] {
-                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+    /**
+     * function returns the email list request observable
+     *
+     * @return the created Observable
+     */
+    public static Observable<ContactDetailState> getEmailDetailsObservable(final Context context, final String contactName, final ContactDetailState state) {
+        return Observable.create(
+                new Observable.OnSubscribe<ContactDetailState>() {
+                    @Override
+                    public void call(Subscriber<? super ContactDetailState> sub) {
+                        try {
+                            List<String> mails = new ArrayList<>();
+                            ContentResolver cr = context.getContentResolver();
+                            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
+                                    null, null, null);
+                            if (cur.getCount() > 0) {
+                                while (cur.moveToNext()) {
+                                    String id = cur.getString(cur
+                                            .getColumnIndex(ContactsContract.Contacts._ID));
+                                    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                                    if(name.equalsIgnoreCase(contactName)) {
+                                        Cursor emailCur = cr.query(
+                                                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                                                        null,
+                                                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                                                        new String[]{id}, null);
+                                                while (emailCur.moveToNext()) {
+                                                    String email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
 
-                            };
+                                                    mails.add(email);
 
-                            Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, selection+ " AND " + ContactsContract.Contacts.HAS_PHONE_NUMBER
-                                    + "=1", null, order);
-
-                            while (cursor.moveToNext()) {
-                                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                                // String phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                                String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
-
+                                                }
+                                                emailCur.close();
+                                            }
+                                        }
 
 
                             }
-                            cursor.close();
+                            state.setmEmailList(mails);
+                            cur.close();
                             sub.onNext(state);
                             sub.onCompleted();
                         } catch (Exception e) {

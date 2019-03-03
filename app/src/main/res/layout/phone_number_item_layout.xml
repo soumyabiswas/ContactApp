@@ -14,12 +14,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="@dimen/textSize_small"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
         android:textColor="@color/black"
         tools:text="991547474"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/phone_call"
         android:layout_width="0dp"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:src="@drawable/ic_call"
@@ -28,6 +34,9 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/sms"
         android:layout_width="0dp"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:src="@drawable/ic_sms"

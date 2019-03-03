@@ -8,25 +8,37 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:padding="@dimen/padding_large"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/profile_text_img"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_img"
             android:layout_width="@dimen/contact_cicle_size"
             android:layout_height="@dimen/contact_cicle_size"
             android:layout_gravity="center_vertical"
+            android:elevation="@dimen/padding_small"
             />
 
-
+            <ImageView
+                android:id="@+id/profile_text_img"
+                android:layout_width="@dimen/contact_cicle_size"
+                android:layout_height="@dimen/contact_cicle_size"
+                android:layout_gravity="center_vertical"
+                android:elevation="@dimen/padding_small"/>
+        </RelativeLayout>
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/contact_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/padding_medium"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="@dimen/padding_large"
                 android:textSize="@dimen/textSize_small"
                 android:textColor="@color/black"
                 tools:text="Ram" />

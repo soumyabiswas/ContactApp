@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.Constants;
 import com.app.pratilipi.contactapp.network.API;
+import com.app.pratilipi.contactapp.utils.UtilMethods;
 import com.travelyaari.tycorelib.events.CoreEvent;
 import com.travelyaari.tycorelib.mvp.BasePresenter;
 import com.travelyaari.tycorelib.ultlils.CoreLogger;
@@ -20,8 +21,8 @@ import rx.Subscription;
 
 public class ContactListPresenter<V extends ContactListView> extends BasePresenter<V> {
 
-    private Observable<List<ContactItemVO>> mContactDetailObservable;
-    private Subscription mContactDetailSubscription;
+    private Observable<List<ContactItemVO>> mContactListObservable;
+    private Subscription mContactListSubscription;
 
     /**
      * Function to request contact details.
@@ -30,39 +31,47 @@ public class ContactListPresenter<V extends ContactListView> extends BasePresent
         if (!isReleased()) {
             getView().showLoading();
         }
-        mContactDetailObservable = API.getContactsObservable(context);
-        mContactDetailSubscription = mContactDetailObservable.subscribe(new Subscriber<List<ContactItemVO>>() {
+        mContactListObservable = API.getContactsObservable(context);
+        mContactListSubscription = mContactListObservable.subscribe(new Subscriber<List<ContactItemVO>>() {
 
             @Override
             public void onCompleted() {
 
-                if (mContactDetailSubscription != null) {
-                    mContactDetailSubscription.unsubscribe();
-                    mContactDetailSubscription = null;
+                if (mContactListSubscription != null) {
+                    mContactListSubscription.unsubscribe();
+                    mContactListSubscription = null;
 
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                CoreLogger.e("ContactDetailPresenter", e);
-                mContactDetailSubscription.unsubscribe();
-                mContactDetailSubscription = null;
+                CoreLogger.e("ContactListPresenter", e);
+                mContactListSubscription.unsubscribe();
+                mContactListSubscription = null;
+                if (!isReleased()) {
+                    if (UtilMethods.isNetworkConnected(AppModule.getmModule())) {
+                        getView().showError(com.travelyaari.tycorelib.Constants.ErrorCodes.SERVER_ERROR);
+                    } else {
+                        getView().showError(com.travelyaari.tycorelib.Constants.ErrorCodes.NETWORK_ERROR);
+                    }
+
+                }
             }
 
             @Override
-            public void onNext(List<ContactItemVO> contactItemVOS) {
+            public void onNext(List<ContactItemVO> contactItemVOList) {
                 if (!isReleased()) {
                     getView().hideLoading();
                 }
-                dispatchContactDetail(contactItemVOS);
+                dispatchContactList(contactItemVOList);
 
             }
         });
     }
 
 
-    private void dispatchContactDetail(List<ContactItemVO> contactItemVOList) {
+    private void dispatchContactList(List<ContactItemVO> contactItemVOList) {
         Bundle data = new Bundle();
         data.putParcelableArrayList(Constants.DATA, (ArrayList<? extends Parcelable>) contactItemVOList);
         AppModule.getmModule().dispatchEvent(new CoreEvent(Constants.CONTACT_LIST_LOADED_EVENT, data));
@@ -72,10 +81,10 @@ public class ContactListPresenter<V extends ContactListView> extends BasePresent
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mContactDetailSubscription != null && !mContactDetailSubscription.isUnsubscribed()) {
-            mContactDetailSubscription.unsubscribe();
+        if (mContactListSubscription != null && !mContactListSubscription.isUnsubscribed()) {
+            mContactListSubscription.unsubscribe();
         }
-        mContactDetailSubscription = null;
-        mContactDetailObservable = null;
+        mContactListSubscription = null;
+        mContactListObservable = null;
     }
 }

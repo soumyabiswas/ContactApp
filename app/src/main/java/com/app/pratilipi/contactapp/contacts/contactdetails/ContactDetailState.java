@@ -3,18 +3,11 @@ package com.app.pratilipi.contactapp.contacts.contactdetails;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.app.pratilipi.contactapp.contacts.ContactItemVO;
-import com.app.pratilipi.contactapp.contacts.ContactListState;
-
 import java.util.List;
 
 public class ContactDetailState implements Parcelable {
 
-
-
-    String mName;
-    String mImgUrl;
-    List<String> mPhoneNumbers;
+    String mPhoneNumber;
     List<String> mEmailList;
 
 
@@ -40,44 +33,24 @@ public class ContactDetailState implements Parcelable {
     }
 
     protected ContactDetailState(Parcel source) {
-        mName= source.readString();
-        mImgUrl= source.readString();
-        mPhoneNumbers = source.createStringArrayList();
+        mPhoneNumber = source.readString();
         mEmailList = source.createStringArrayList();
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mName);
-        parcel.writeString(mImgUrl);
-        parcel.writeStringList(mPhoneNumbers);
+        parcel.writeString(mPhoneNumber);
         parcel.writeStringList(mEmailList);
 
     }
 
 
-    public String getmName() {
-        return mName;
+    public String getmPhoneNumber() {
+        return mPhoneNumber;
     }
 
-    public void setmName(String mName) {
-        this.mName = mName;
-    }
-
-    public String getmImgUrl() {
-        return mImgUrl;
-    }
-
-    public void setmImgUrl(String mImgUrl) {
-        this.mImgUrl = mImgUrl;
-    }
-
-    public List<String> getmPhoneNumbers() {
-        return mPhoneNumbers;
-    }
-
-    public void setmPhoneNumbers(List<String> mPhoneNumbers) {
-        this.mPhoneNumbers = mPhoneNumbers;
+    public void setmPhoneNumber(String mPhoneNumber) {
+        this.mPhoneNumber = mPhoneNumber;
     }
 
     public List<String> getmEmailList() {

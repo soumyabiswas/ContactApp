@@ -3,6 +3,7 @@ package com.app.pratilipi.contactapp.contacts;
 import android.view.View;
 
 import com.app.pratilipi.contactapp.Common.views.ProgressView;
+import com.app.pratilipi.contactapp.Constants;
 import com.app.pratilipi.contactapp.R;
 
 import com.travelyaari.tycorelib.mvp.ViewState;
@@ -18,8 +19,6 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
     @BindView(R.id.list_view)
     RecyclerView mContactListView;
 
-
-
     @Override
     protected int getLayoutID() {
         return R.layout.contact_list;
@@ -32,7 +31,7 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
 
     @Override
     protected String getRetryEventName() {
-        return null;
+        return Constants.INITIATE_CONTACT_LIST_LOAD_EVENT;
     }
 
     @Override
@@ -43,9 +42,6 @@ public class ContactListView extends ProgressView<ViewState, ContactListState> {
     @Override
     protected void onInflate() {
         mContactListView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContactListView.getContext(),
-                DividerItemDecoration.VERTICAL);
-        mContactListView.addItemDecoration(dividerItemDecoration);
 
     }
 

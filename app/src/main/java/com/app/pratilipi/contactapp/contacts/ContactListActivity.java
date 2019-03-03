@@ -1,6 +1,7 @@
 package com.app.pratilipi.contactapp.contacts;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.Constants;
 import com.app.pratilipi.contactapp.R;
+import com.app.pratilipi.contactapp.contacts.contactdetails.ContactDetailActivity;
 import com.travelyaari.tycorelib.activities.MVPActivity;
 import com.travelyaari.tycorelib.events.CoreEvent;
 import com.travelyaari.tycorelib.events.Event;
@@ -126,7 +128,17 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     public void onEvent(Event event) {
         if (event.getType().equalsIgnoreCase(Constants.CONTACT_LIST_LOADED_EVENT)) {
             handleContactsLoadedEvents(((CoreEvent) event).getmExtra());
+        }else if (event.getType().equalsIgnoreCase(Constants.CONTACT_ITEM_CLICKED_EVENT)) {
+            handleContactsDetailsLoaded(((CoreEvent) event).getmExtra());
+        }else if (event.getType().equalsIgnoreCase(Constants.INITIATE_CONTACT_LIST_LOAD_EVENT)) {
+            askForContactPermission();
         }
+    }
+
+    private void handleContactsDetailsLoaded(Bundle bundle){
+        Intent intent = new Intent(this,ContactDetailActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void handleContactsLoadedEvents(Bundle bundle) {
@@ -138,11 +150,15 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
 
     void addGlobalEvents() {
         AppModule.getmModule().addEventListener(Constants.CONTACT_LIST_LOADED_EVENT, this);
+        AppModule.getmModule().addEventListener(Constants.CONTACT_ITEM_CLICKED_EVENT, this);
+        AppModule.getmModule().addEventListener(Constants.INITIATE_CONTACT_LIST_LOAD_EVENT, this);
 
     }
 
     void removeGlobalEvents() {
         AppModule.getmModule().removeEventListener(Constants.CONTACT_LIST_LOADED_EVENT, this);
+        AppModule.getmModule().removeEventListener(Constants.CONTACT_ITEM_CLICKED_EVENT, this);
+        AppModule.getmModule().removeEventListener(Constants.INITIATE_CONTACT_LIST_LOAD_EVENT, this);
 
     }
 
