@@ -3,8 +3,11 @@ package com.app.pratilipi.contactapp.contacts;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import com.app.pratilipi.contactapp.AppModule;
@@ -24,6 +27,7 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     ContactListAdapter mContactListAdapter;
 
     ContactListState mState;
+    ContactObserver mObserver;
 
     @Override
     protected Class getPresenterClass() {
@@ -39,10 +43,23 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     }
 
     void loadContacts() {
-        if (mState.mContactVOList == null) {
-            mPresenter.getContacts(this);
-        } else {
-            mContactListAdapter.setmDataprovider(mState.mContactVOList);
+        mPresenter.getContacts(this);
+
+    }
+
+    public class ContactObserver extends ContentObserver {
+        public ContactObserver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            loadContacts();
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            return true;
         }
     }
 
@@ -144,6 +161,21 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     private void handleContactsLoadedEvents(Bundle bundle) {
         mState.mContactVOList = bundle.getParcelableArrayList(Constants.DATA);
         mContactListAdapter.setmDataprovider(mState.mContactVOList);
+        registerContentObserver();
+    }
+
+
+    void registerContentObserver() {
+        mObserver = new ContactObserver(new Handler());
+        getContentResolver()
+                .registerContentObserver(
+                        ContactsContract.Contacts.CONTENT_URI, true, mObserver);
+
+    }
+
+    void unregisterContentObserver() {
+        getContentResolver()
+                .unregisterContentObserver(mObserver);
 
     }
 
@@ -165,7 +197,7 @@ public class ContactListActivity extends MVPActivity<ContactListView, ContactLis
     @Override
     public void onDestroy() {
         removeGlobalEvents();
+        unregisterContentObserver();
         super.onDestroy();
-
     }
 }
