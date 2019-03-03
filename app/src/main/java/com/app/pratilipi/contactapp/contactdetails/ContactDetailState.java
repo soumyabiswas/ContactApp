@@ -1,18 +1,20 @@
-package com.app.pratilipi.contactapp.contacts.contactdetails;
+package com.app.pratilipi.contactapp.contactdetails;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDetailState implements Parcelable {
 
-    String mPhoneNumber;
+
     List<String> mEmailList;
+    List<String> mPhoneList;
 
 
     public ContactDetailState() {
-
+        mPhoneList = new ArrayList<>();
     }
 
     public static final Creator<ContactDetailState> CREATOR = new Creator<ContactDetailState>() {
@@ -33,24 +35,15 @@ public class ContactDetailState implements Parcelable {
     }
 
     protected ContactDetailState(Parcel source) {
-        mPhoneNumber = source.readString();
         mEmailList = source.createStringArrayList();
+        mPhoneList = source.createStringArrayList();
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mPhoneNumber);
         parcel.writeStringList(mEmailList);
+        parcel.writeStringList(mPhoneList);
 
-    }
-
-
-    public String getmPhoneNumber() {
-        return mPhoneNumber;
-    }
-
-    public void setmPhoneNumber(String mPhoneNumber) {
-        this.mPhoneNumber = mPhoneNumber;
     }
 
     public List<String> getmEmailList() {
@@ -59,5 +52,22 @@ public class ContactDetailState implements Parcelable {
 
     public void setmEmailList(List<String> mEmailList) {
         this.mEmailList = mEmailList;
+    }
+
+    public List<String> getmPhoneList() {
+        return mPhoneList;
+    }
+
+    public boolean containsPhone(String phoneNumber) {
+        for (String phone: mPhoneList) {
+            if (phone.replace(" ", "").equals(phoneNumber.replace(" ", ""))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addPhoneNumber(String phone) {
+        this.mPhoneList.add(phone);
     }
 }

@@ -27,7 +27,7 @@
 
 
         <activity
-            android:name=".contacts.contactdetails.ContactDetailActivity"
+            android:name=".contactdetails.ContactDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>

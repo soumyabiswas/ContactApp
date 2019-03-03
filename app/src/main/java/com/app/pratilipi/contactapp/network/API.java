@@ -3,11 +3,10 @@ package com.app.pratilipi.contactapp.network;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 
 import com.app.pratilipi.contactapp.contacts.ContactItemVO;
-import com.app.pratilipi.contactapp.contacts.contactdetails.ContactDetailState;
+import com.app.pratilipi.contactapp.contactdetails.ContactDetailState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +15,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static android.provider.OpenableColumns.DISPLAY_NAME;
 
 public final class API {
 
@@ -76,14 +73,17 @@ public final class API {
                     public void call(Subscriber<? super ContactDetailState> sub) {
                         try {
                             ContactDetailState state = new ContactDetailState();
-                            String phoneNo = null;
-                            String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like'%" + contactName +"%'";
-                            String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                            String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '" + contactName +"'";
+                            String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER,
+                                    ContactsContract.CommonDataKinds.Phone.TYPE};
                             Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                                     projection, selection, null, null);
-                            if (c.moveToFirst()) {
-                                phoneNo = c.getString(0);
-                                state.setmPhoneNumber(phoneNo);
+                            while (c.moveToNext()){
+                                String phoneNo = c.getString(0);
+                                if (!state.containsPhone(phoneNo)){
+                                        state.addPhoneNumber(phoneNo);
+                                }
                             }
                             c.close();
                             sub.onNext(state);

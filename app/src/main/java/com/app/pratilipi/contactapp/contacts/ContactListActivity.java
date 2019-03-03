@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.Constants;
 import com.app.pratilipi.contactapp.R;
-import com.app.pratilipi.contactapp.contacts.contactdetails.ContactDetailActivity;
+import com.app.pratilipi.contactapp.contactdetails.ContactDetailActivity;
 import com.travelyaari.tycorelib.activities.MVPActivity;
 import com.travelyaari.tycorelib.events.CoreEvent;
 import com.travelyaari.tycorelib.events.Event;

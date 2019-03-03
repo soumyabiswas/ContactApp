@@ -1,4 +1,4 @@
-package com.app.pratilipi.contactapp.contacts.contactdetails;
+package com.app.pratilipi.contactapp.contactdetails;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -74,7 +74,15 @@ public class ContactDetailView extends ProgressView<ViewState, ContactDetailStat
 
     }
 
-    public void setPhoneNumbers(String phoneNumber){
+    public void clearAllPhoneViews() {
+        mPhoneNoLayout.removeAllViews();
+    }
+
+    public void clearAllMailViews() {
+        mEmailLayout.removeAllViews();
+    }
+
+    public void addPhoneNumbers(String phoneNumber){
         int layout = R.layout.phone_number_item_layout;
         LayoutInflater inflater = LayoutInflater.from(mPhoneNoLayout.getContext());
         View view = inflater.inflate(layout,mPhoneNoLayout, false);

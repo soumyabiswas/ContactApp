@@ -1,4 +1,4 @@
-package com.app.pratilipi.contactapp.contacts.contactdetails;
+package com.app.pratilipi.contactapp.contactdetails;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -27,7 +27,7 @@ public class ContactDetailActivity extends MVPActivity<ContactDetailView, Contac
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("");
+        setTitle(getArgs().getmName());
         createStateIfNull();
         updateIntroView();
     }
@@ -69,7 +69,7 @@ public class ContactDetailActivity extends MVPActivity<ContactDetailView, Contac
 
 
     private void loadContactDetails(){
-        if (mState.getmPhoneNumber() == null) {
+        if (mState.getmPhoneList().isEmpty()) {
             mPresenter.getContactDetails(this, getArgs().getmName());
         } else {
             showPhoneNumber();
@@ -107,13 +107,17 @@ public class ContactDetailActivity extends MVPActivity<ContactDetailView, Contac
     }
 
     void showPhoneNumber() {
-        if (mState != null && mState.getmPhoneNumber() != null) {
-            mView.setPhoneNumbers(mState.getmPhoneNumber());
+        mView.clearAllPhoneViews();
+        if (mState != null && mState.getmPhoneList()!=null) {
+            for (String phone : mState.getmPhoneList()){
+                mView.addPhoneNumbers(phone);
+            }
+
         }
     }
 
     void showMails() {
-        if (mState != null && mState.getmEmailList() != null && !mState.getmEmailList().isEmpty()) {
+        if (mState != null && mState.getmEmailList() != null ) {
             for (int i = 0; i < mState.getmEmailList().size(); i++) {
                 mView.setEmail(mState.getmEmailList().get(i));
             }

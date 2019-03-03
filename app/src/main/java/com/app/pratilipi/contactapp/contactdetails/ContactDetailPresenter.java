@@ -1,12 +1,10 @@
-package com.app.pratilipi.contactapp.contacts.contactdetails;
+package com.app.pratilipi.contactapp.contactdetails;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.app.pratilipi.contactapp.AppModule;
 import com.app.pratilipi.contactapp.Constants;
-import com.app.pratilipi.contactapp.contacts.ContactItemVO;
 import com.app.pratilipi.contactapp.network.API;
 import com.app.pratilipi.contactapp.utils.UtilMethods;
 import com.travelyaari.tycorelib.events.CoreEvent;

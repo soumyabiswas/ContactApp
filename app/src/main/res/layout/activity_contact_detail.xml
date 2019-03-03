@@ -59,7 +59,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_medium"
             android:layout_marginBottom="@dimen/padding_medium"
-            android:paddingLeft="@dimen/padding_medium"
             android:textColor="@color/black"
             android:textSize="@dimen/textSize_large"
             tools:text="Abcd" />
